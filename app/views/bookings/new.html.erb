@@ -29,6 +29,12 @@
       </div>
     </div>
   <% end %>
-
-  <%= f.submit "Create Booking" %>
+  
+  <div data-controller="toggler">
+    <button type="button" data-action="toggler#hideShow" class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">Lights on</button>
+    <div data-toggler-target="lightContent" class="mt-4">
+      <p>The lights are on! weewhoo</p>
+      <%= f.submit "Create Booking" %>
+    </div>
+  </div>
 <% end %>
