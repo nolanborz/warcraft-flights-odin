@@ -1,5 +1,76 @@
-<div data-controller="hello">
-  <button data-action="click->hello#greet" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-    Button
-  </button>
-</div>
+<%# app/views/flights/index.html.erb %>
+<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+  Button
+</button>
+
+<%# Search Form - stays at top %>
+<%= form_with url: flights_path, method: :get, local: true do |f| %>
+  <div>
+    <%= f.label :departure_airport_id, "Departure Airport:" %>
+    <%= f.collection_select :departure_airport_id, 
+                          Airport.all, 
+                          :id, 
+                          :code,
+                          { selected: params[:departure_airport_id], 
+                            prompt: "Select departure airport" } %>
+  </div>
+
+  <div>
+    <%= f.label :arrival_airport_id, "Arrival Airport:" %>
+    <%= f.collection_select :arrival_airport_id, 
+                          Airport.all, 
+                          :id, 
+                          :code,
+                          { selected: params[:arrival_airport_id], 
+                            prompt: "Select arrival airport" } %>
+  </div>
+
+  <div>
+    <%= f.label :num_passengers, "Number of Passengers:" %>
+    <%= f.select :num_passengers, 
+                 options_for_select(1..4, params[:num_passengers]), 
+                 prompt: "Select number of passengers" %>
+  </div>
+
+  <div>
+    <%= f.label :flight_date, "Flight Date:" %>
+    <%= f.select :flight_date, 
+                 options_from_collection_for_select(
+                   @flight_dates,
+                   :to_s,
+                   ->(date) { date.strftime('%B %d, %Y') },
+                   params[:flight_date]
+                 ),
+                 prompt: "Select flight date" %>
+  </div>
+
+  <%= f.submit "Search Flights" %>
+<% end %>
+
+<%# Results Form - only shows if flights were searched for %>
+<% if params[:commit] %>
+  <% if @flights.any? %>
+    <%= form_with url: new_booking_path, method: :get, local: true do |f| %>
+      <%= f.hidden_field :num_passengers, value: @passenger_count %>
+      
+      <div id="flights_list">
+        <% @flights.each do |flight| %>
+          <div class="flight">
+            <%= f.radio_button :flight_id, flight.id %>
+            <%= f.label "flight_id_#{flight.id}" do %>
+              From: <%= flight.departure_airport.code %><br>
+              To: <%= flight.arrival_airport.code %><br>
+              Date: <%= flight.start_datetime.strftime('%B %d, %Y at %I:%M %p') %><br>
+              Duration: <%= flight.duration / 3600 %> hours
+            <% end %>
+            <hr>
+          </div>
+        <% end %>
+      </div>
+
+      <%= f.submit "Book Flight" %>
+    <% end %>
+  <% else %>
+    <p>No flights found matching your criteria.</p>
+  <% end %>
+<% end %>
