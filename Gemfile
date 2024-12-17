@@ -56,3 +56,7 @@ gem "jsbundling-rails", "~> 1.3"
 gem "tailwindcss-rails", "~> 3.0"
 
 gem "stimulus-rails"
+
+group :development do
+  gem "letter_opener"
+end

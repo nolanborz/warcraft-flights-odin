@@ -9,7 +9,12 @@ class BookingsController < ApplicationController
     @booking = Booking.new(booking_params)
 
     if @booking.save
-      redirect_to @booking, notice: "Booking was successfully created."
+      # Send confirmation email to each passenger
+      @booking.passengers.each do |passenger|
+        PassengerMailer.welcome_email(passenger, @booking).deliver_later
+      end
+
+      redirect_to @booking, notice: "Booking was successfully created. Confirmation emails have been sent."
     else
       @flight = @booking.flight
       render :new
