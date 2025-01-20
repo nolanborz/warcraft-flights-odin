@@ -53,7 +53,7 @@ end
 # gems I have added manually
 gem "jsbundling-rails", "~> 1.3"
 
-gem "tailwindcss-rails", "~> 3.0"
+gem "tailwindcss-rails", "~> 3.3"
 
 gem "stimulus-rails"
 
